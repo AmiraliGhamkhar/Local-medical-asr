@@ -1,0 +1,13 @@
+node_modules
+dist
+.DS_Store
+*.local
+.vite
+
+# TypeScript incremental build state
+*.tsbuildinfo
+
+# Local Convex deployment: database, pushed modules and deployment cache.
+# This holds test accounts and password hashes — it is machine state, not source.
+convex_local_storage
+.convex
