@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck and browser tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      # The page suite drives real timers (the rehearsal engine paces itself
+      # like a decoder), so it runs separately with a timeout that fits it.
+      - name: Pipeline, component and provider tests
+        run: bunx vitest run --exclude 'src/pages/**'
+
+      - name: Page tests
+        run: bunx vitest run src/pages --testTimeout=20000
+
+  backend:
+    name: Convex backend integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      # Password stretching, token expiry and tenant scoping cannot be checked
+      # against a mock, so the backend suite needs a real deployment. The binary
+      # is published as a release asset and lands where verify-backend.sh looks.
+      - name: Fetch the local Convex backend
+        run: |
+          mkdir -p "$HOME/.cache/convex/binaries/ci"
+          curl -fsSL -o /tmp/convex-local-backend.zip \
+            https://github.com/get-convex/convex-backend/releases/latest/download/convex-local-backend-x86_64-unknown-linux-gnu.zip
+          unzip -q /tmp/convex-local-backend.zip -d "$HOME/.cache/convex/binaries/ci"
+          chmod +x "$HOME/.cache/convex/binaries/ci/convex-local-backend"
+
+      - name: Verify the backend end to end
+        run: sh ./scripts/verify-backend.sh

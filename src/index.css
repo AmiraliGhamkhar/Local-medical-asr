@@ -1,0 +1,114 @@
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 197 26% 5%;
+    --foreground: 168 22% 93%;
+
+    --card: 198 24% 8%;
+    --card-foreground: 168 22% 93%;
+
+    --primary: 172 74% 45%;
+    --primary-foreground: 197 40% 5%;
+
+    --secondary: 198 20% 13%;
+    --secondary-foreground: 168 18% 88%;
+
+    --muted: 198 18% 12%;
+    --muted-foreground: 190 12% 58%;
+
+    --accent: 36 94% 60%;
+    --accent-foreground: 30 60% 8%;
+
+    --danger: 358 72% 58%;
+    --danger-foreground: 358 60% 98%;
+
+    --warn: 44 96% 56%;
+    --warn-foreground: 44 60% 8%;
+
+    --ok: 152 62% 48%;
+    --ok-foreground: 152 60% 6%;
+
+    --border: 195 20% 17%;
+    --input: 195 20% 17%;
+    --ring: 172 74% 45%;
+
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "cv01";
+    min-height: 100vh;
+  }
+
+  /* Clinical grid + girih-inspired hairline texture, deliberately low contrast. */
+  .surface-grid {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.45) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.45) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .surface-vignette {
+    background:
+      radial-gradient(900px 480px at 78% -10%, hsl(172 74% 45% / 0.16), transparent 62%),
+      radial-gradient(760px 420px at 6% 4%, hsl(36 94% 60% / 0.1), transparent 60%),
+      radial-gradient(1100px 700px at 50% 120%, hsl(198 40% 20% / 0.5), transparent 70%);
+  }
+
+  .panel {
+    @apply rounded-lg border border-border/80 bg-card/70 backdrop-blur-sm;
+  }
+
+  .hairline {
+    @apply bg-gradient-to-l from-transparent via-border to-transparent;
+  }
+
+  /* Live transcript surface: let the browser resolve the Unicode isolates we emit. */
+  .bidi-surface {
+    unicode-bidi: plaintext;
+    text-align: start;
+  }
+
+  .flag-low {
+    text-decoration: underline wavy hsl(var(--warn) / 0.9);
+    text-underline-offset: 4px;
+  }
+
+  .flag-critical {
+    text-decoration: underline wavy hsl(var(--danger) / 0.95);
+    text-underline-offset: 4px;
+  }
+
+  .tabnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}
